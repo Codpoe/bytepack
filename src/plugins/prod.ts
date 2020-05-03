@@ -1,7 +1,7 @@
 import { IS_PROD } from '../constants';
-import { MiliPlugin } from '../types';
+import { Plugin } from '../types';
 
-const prodPlugin: MiliPlugin = (api) => {
+const prodPlugin: Plugin = (api) => {
   api.webpack((config) => {
     config.when(IS_PROD, (config) => {
       config.mode('production');

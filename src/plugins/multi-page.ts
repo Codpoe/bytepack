@@ -2,14 +2,14 @@ import glob from 'glob';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 import { ROOT_PATH, IS_PROD } from '../constants';
-import { MiliPlugin } from '../types';
+import { Plugin } from '../types';
 
 export interface MultiPageOptions {
   outputPath?: string;
   publicPath?: string;
 }
 
-const multiPagePlugin: MiliPlugin<MultiPageOptions> = (api, options = {}) => {
+const multiPagePlugin: Plugin<MultiPageOptions> = (api, options = {}) => {
   const { outputPath, publicPath } = options;
   const entryFiles =
     glob.sync(path.join(ROOT_PATH, './src/pages/*/main.{js,ts,jsx,tsx}')) || [];

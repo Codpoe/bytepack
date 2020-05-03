@@ -1,20 +1,20 @@
-import Config from 'webpack-chain';
+import WebpackChain from 'webpack-chain';
 
-export interface MiliApi {
-  webpack(fn: (config: Config) => void): void;
+export interface Api {
+  webpack(fn: (config: WebpackChain) => void): void;
 }
 
-export interface MiliPlugin<T = any> {
-  (api: MiliApi, options?: T, miliConfig?: MiliConfig): void;
+export interface Plugin<T = any> {
+  (api: Api, options?: T, config?: Config): void;
 }
 
-export interface MiliPreset<T = any> {
-  (options?: T): MiliConfig;
+export interface Preset<T = any> {
+  (options?: T): Config;
 }
 
-export interface MiliConfig {
-  presets?: (MiliPreset | [MiliPreset, any])[];
-  plugins?: (MiliPlugin | [MiliPlugin, any])[];
+export interface Config {
+  presets?: (Preset | [Preset, any])[];
+  plugins?: (Plugin | [Plugin, any])[];
   devServer?: {
     host?: string;
     port?: number;

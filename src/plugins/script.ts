@@ -1,4 +1,4 @@
-import { MiliPlugin } from '../types';
+import { Plugin } from '../types';
 
 export interface ScriptOptions {
   cacheDirectory?: boolean;
@@ -6,7 +6,7 @@ export interface ScriptOptions {
   react?: boolean;
 }
 
-const scriptPlugin: MiliPlugin<ScriptOptions> = (api, options = {}) => {
+const scriptPlugin: Plugin<ScriptOptions> = (api, options = {}) => {
   const { cacheDirectory = true, typescript = true, react = false } = options;
 
   api.webpack((config) => {

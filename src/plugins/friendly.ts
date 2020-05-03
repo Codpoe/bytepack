@@ -3,7 +3,7 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin';
 import { logger } from '../utils';
 import { IS_PROD } from '../constants';
-import { MiliPlugin } from '../types';
+import { Plugin } from '../types';
 
 const completeChar = '\u2588';
 const incompleteChar = '\u2591';
@@ -28,7 +28,7 @@ const progressPluginHandler = (percent: number, msg: string) => {
   process.stdout.cursorTo(10000);
 };
 
-const friendlyPlugin: MiliPlugin = (api) => {
+const friendlyPlugin: Plugin = (api) => {
   api.webpack((config) => {
     config
       .plugin('progress')

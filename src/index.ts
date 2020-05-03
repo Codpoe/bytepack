@@ -1,12 +1,12 @@
 import webpack from 'webpack';
 import webpackDevServer from 'webpack-dev-server';
 import WebpackChain from 'webpack-chain';
-import { MiliConfig, MiliApi } from './types';
+import { Config, Api } from './types';
 import { logPkgInfo, defaults } from './utils';
 import { DEFAULT_CONFIG } from './constants';
 
-function parsePresets(presets: MiliConfig['presets']) {
-  const plugins: MiliConfig['plugins'] = [];
+function parsePresets(presets: Config['presets']) {
+  const plugins: Config['plugins'] = [];
 
   presets?.forEach((preset) => {
     const content = Array.isArray(preset) ? preset[0](preset[1]) : preset();
@@ -23,7 +23,7 @@ function parsePresets(presets: MiliConfig['presets']) {
   return plugins;
 }
 
-function createApi(params: { webpackChain: WebpackChain }): MiliApi {
+function createApi(params: { webpackChain: WebpackChain }): Api {
   const { webpackChain } = params;
 
   return {
@@ -33,8 +33,8 @@ function createApi(params: { webpackChain: WebpackChain }): MiliApi {
   };
 }
 
-function mountPlugin(api: MiliApi, miliConfig: MiliConfig) {
-  return (...plugins: NonNullable<MiliConfig['plugins']>) => {
+function mountPlugin(api: Api, config: Config) {
+  return (...plugins: NonNullable<Config['plugins']>) => {
     plugins?.forEach((plugin) => {
       let fn;
       let options;
@@ -45,23 +45,23 @@ function mountPlugin(api: MiliApi, miliConfig: MiliConfig) {
         fn = plugin;
       }
 
-      fn(api, options, miliConfig);
+      fn(api, options, config);
     });
   };
 }
 
-export default (miliConfig: MiliConfig = {}) => {
+export default (config: Config = {}) => {
   logPkgInfo();
 
   const { presets = [], plugins = [], devServer } = defaults(
     DEFAULT_CONFIG,
-    miliConfig
+    config
   );
   const allPlugins = parsePresets(presets).concat(plugins);
   const webpackChain = new WebpackChain();
   const api = createApi({ webpackChain });
 
-  mountPlugin(api, miliConfig)(...allPlugins);
+  mountPlugin(api, config)(...allPlugins);
 
   const webpackConfig = webpackChain.toConfig();
   const compiler = webpack(webpackConfig);

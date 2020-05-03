@@ -1,11 +1,11 @@
 import path from 'path';
-import { MiliConfig } from './types';
+import { Config } from './types';
 
 export const ROOT_PATH = process.cwd();
 export const PKG_PATH = path.join(__dirname, '../package.json');
 export const IS_PROD = process.env.NODE_ENV === 'production';
 
-export const DEFAULT_CONFIG: MiliConfig = {
+export const DEFAULT_CONFIG: Config = {
   presets: [],
   plugins: [],
   devServer: {

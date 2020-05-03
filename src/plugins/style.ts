@@ -1,9 +1,9 @@
 import autoprefixer from 'autoprefixer';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { IS_PROD } from '../constants';
-import { MiliPlugin } from '../types';
+import { Plugin } from '../types';
 
-const stylePlugin: MiliPlugin = (api) => {
+const stylePlugin: Plugin = (api) => {
   api.webpack((config) => {
     const rule = config.module
       .rule('style')
