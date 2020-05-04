@@ -6,12 +6,12 @@ import stylePlugin from '../plugins/style';
 import multiPagePlugin, { MultiPageOptions } from '../plugins/multi-page';
 import { Preset } from '../types';
 
-export interface MPAOptions {
+export interface MpaOptions {
   multiPageOptions?: MultiPageOptions;
   scriptOptions?: ScriptOptions;
 }
 
-const MPAPreset: Preset<MPAOptions> = (options = {}) => {
+const mpaPreset: Preset<MpaOptions> = (options = {}) => {
   const { multiPageOptions, scriptOptions } = options;
   return {
     plugins: [
@@ -25,4 +25,4 @@ const MPAPreset: Preset<MPAOptions> = (options = {}) => {
   };
 };
 
-export default MPAPreset;
+export default mpaPreset;
