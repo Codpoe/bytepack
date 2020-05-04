@@ -1,4 +1,5 @@
-import { Plugin } from '../types';
+import Config from 'webpack-chain';
+import Plugin from './plugin';
 
 export interface ScriptOptions {
   cacheDirectory?: boolean;
@@ -6,10 +7,11 @@ export interface ScriptOptions {
   react?: boolean;
 }
 
-const scriptPlugin: Plugin<ScriptOptions> = (api, options = {}) => {
-  const { cacheDirectory = true, typescript = true, react = false } = options;
+export default class ScriptPlugin extends Plugin<ScriptOptions> {
+  webpack(config: Config) {
+    const { cacheDirectory = true, typescript = true, react = false } =
+      this.options || {};
 
-  api.webpack((config) => {
     const rule = config.module
       .rule('script')
       .test(/\.(js|ts|jsx|tsx)$/)
@@ -43,7 +45,5 @@ const scriptPlugin: Plugin<ScriptOptions> = (api, options = {}) => {
           ],
         ],
       });
-  });
-};
-
-export default scriptPlugin;
+  }
+}

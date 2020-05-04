@@ -1,10 +1,15 @@
 import fs from 'fs-extra';
 import boxen, { BorderStyle } from 'boxen';
 import chalk, { BackgroundColor, Color } from 'chalk';
-import { PKG_PATH } from './constants';
-import { Logger, LogType } from './types';
+import { PKG_PATH, DEFAULT_CONFIG } from './constants';
+import { Logger, LogType, Config } from './types';
 
-let pkg: Record<string, any>;
+interface Cache {
+  pkg?: Record<string, any>;
+  config?: Omit<Config, 'presets'>;
+}
+
+const cache: Cache = {};
 
 const logColors: Record<LogType, typeof Color> = {
   info: 'blue',
@@ -16,10 +21,10 @@ const logColors: Record<LogType, typeof Color> = {
 export function getPkg(): Record<string, any>;
 export function getPkg(key: string): any;
 export function getPkg(key?: string): any {
-  if (!pkg) {
-    pkg = fs.readJsonSync(PKG_PATH);
+  if (!cache.pkg) {
+    cache.pkg = fs.readJsonSync(PKG_PATH);
   }
-  return key ? pkg[key] : pkg;
+  return key ? (cache.pkg as Record<string, any>)[key] : cache.pkg;
 }
 
 export function logPkgInfo() {
@@ -78,4 +83,46 @@ export function defaults<T extends any>(defaultOptions: T, options: T): T {
   }
 
   return options;
+}
+
+export function parsePresets(presets: Config['presets']) {
+  const plugins: Config['plugins'] = [];
+
+  presets?.forEach((preset) => {
+    const content = Array.isArray(preset) ? preset[0](preset[1]) : preset();
+
+    if (content.presets) {
+      plugins.push(...parsePresets(content.presets));
+    }
+
+    if (content.plugins) {
+      plugins.push(...content.plugins);
+    }
+  });
+
+  return plugins;
+}
+
+export function parseConfig(config: Config) {
+  if (!cache.config) {
+    const { presets = [], plugins = [], ...rest } = defaults(
+      DEFAULT_CONFIG,
+      config
+    );
+
+    cache.config = {
+      plugins: parsePresets(presets).concat(plugins),
+      ...rest,
+    };
+  }
+
+  return cache.config;
+}
+
+export function setNodeEnv(nodeEnv: 'development' | 'production') {
+  process.env.NODE_ENV = nodeEnv;
+}
+
+export function isProd() {
+  return process.env.NODE_ENV === 'production';
 }

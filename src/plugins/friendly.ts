@@ -1,9 +1,9 @@
 import webpack from 'webpack';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin';
-import { logger } from '../utils';
-import { IS_PROD } from '../constants';
-import { Plugin } from '../types';
+import Config from 'webpack-chain';
+import Plugin from './plugin';
+import { logger, isProd } from '../utils';
 
 const completeChar = '\u2588';
 const incompleteChar = '\u2591';
@@ -28,8 +28,8 @@ const progressPluginHandler = (percent: number, msg: string) => {
   process.stdout.cursorTo(10000);
 };
 
-const friendlyPlugin: Plugin = (api) => {
-  api.webpack((config) => {
+export default class FriendlyPlugin extends Plugin {
+  webpack(config: Config) {
     config
       .plugin('progress')
       .use(webpack.ProgressPlugin, [progressPluginHandler])
@@ -37,10 +37,8 @@ const friendlyPlugin: Plugin = (api) => {
       .plugin('friendly-errors')
       .use(FriendlyErrorsWebpackPlugin)
       .end()
-      .when(IS_PROD, (config) =>
+      .when(isProd(), (config) =>
         config.plugin('clean').use(CleanWebpackPlugin).end()
       );
-  });
-};
-
-export default friendlyPlugin;
+  }
+}

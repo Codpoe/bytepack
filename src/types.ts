@@ -1,25 +1,16 @@
-import WebpackChain from 'webpack-chain';
+import Plugin from './plugins/plugin';
 
-export interface Api {
-  webpack(fn: (config: WebpackChain) => void): void;
-}
-
-export interface Plugin<T = any> {
-  (api: Api, options?: T, config?: Config): void;
-}
-
-export interface Preset<T = any> {
-  (options?: T): Config;
-}
+export type Preset<T> = (options?: T) => Config;
 
 export interface Config {
-  presets?: (Preset | [Preset, any])[];
-  plugins?: (Plugin | [Plugin, any])[];
+  presets?: (Preset<any> | [Preset<any>, Parameters<Preset<any>>])[];
+  plugins?: Plugin<any>[];
   devServer?: {
     host?: string;
     port?: number;
     hot?: boolean;
   };
+  watch?: {};
 }
 
 export type LogType = 'info' | 'success' | 'warning' | 'error';

@@ -1,31 +1,31 @@
-import glob from 'glob';
+import fastGlob from 'fast-glob';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import path from 'path';
-import { ROOT_PATH, IS_PROD } from '../constants';
-import { Plugin } from '../types';
+import Config from 'webpack-chain';
+import Plugin from './plugin';
+import { isProd } from '../utils';
 
 export interface MultiPageOptions {
   outputPath?: string;
   publicPath?: string;
 }
 
-const multiPagePlugin: Plugin<MultiPageOptions> = (api, options = {}) => {
-  const { outputPath, publicPath } = options;
-  const entryFiles =
-    glob.sync(path.join(ROOT_PATH, './src/pages/*/main.{js,ts,jsx,tsx}')) || [];
+export default class MultiPagePlugin extends Plugin<MultiPageOptions> {
+  webpack(config: Config) {
+    const { outputPath, publicPath } = this.options || {};
+    const entryFiles =
+      fastGlob.sync('./src/pages/*/index.{js,ts,jsx,tsx}') || [];
 
-  api.webpack((config) => {
     const htmlWebpackPlugin = config.plugin('HtmlWebpackPlugin');
 
     entryFiles.forEach((file) => {
-      const name = (file.match(/\/src\/pages\/(.*)\/main\./) || [])[1];
+      const name = (file.match(/\/src\/pages\/(.*)\/index\./) || [])[1];
 
       config.entry(name).add(file).end();
 
       htmlWebpackPlugin.use(HtmlWebpackPlugin, [
         {
-          template: path.join(ROOT_PATH, `./src/pages/${name}/main.html`),
-          filename: `${name}.html`,
+          template: `./src/pages/${name}/index.html`,
+          filename: `views/${name}.html`,
           chunks: [name],
           inject: true,
         },
@@ -35,9 +35,7 @@ const multiPagePlugin: Plugin<MultiPageOptions> = (api, options = {}) => {
     config.output
       .path(outputPath as string)
       .publicPath(publicPath as string)
-      .filename(IS_PROD ? 'js/[name]_[contenthash].js' : 'js/[name].js') // 生成环境，使用 contenthash 进行缓存)
-      .chunkFilename(IS_PROD ? 'js/[id]_[contenthash].js' : 'js/[id].js');
-  });
-};
-
-export default multiPagePlugin;
+      .filename(isProd() ? 'js/[name]_[contenthash].js' : 'js/[name].js') // 生成环境，使用 contenthash 进行缓存)
+      .chunkFilename(isProd() ? 'js/[id]_[contenthash].js' : 'js/[id].js');
+  }
+}

@@ -1,12 +1,11 @@
-import { IS_PROD } from '../constants';
-import { Plugin } from '../types';
+import Config from 'webpack-chain';
+import Plugin from './plugin';
+import { isProd } from '../utils';
 
-const prodPlugin: Plugin = (api) => {
-  api.webpack((config) => {
-    config.when(IS_PROD, (config) => {
+export default class ProdPlugin extends Plugin {
+  webpack(config: Config) {
+    config.when(isProd(), (config) => {
       config.mode('production');
     });
-  });
-};
-
-export default prodPlugin;
+  }
+}

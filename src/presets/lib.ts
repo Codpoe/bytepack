@@ -2,22 +2,20 @@ import FriendlyPlugin from '../plugins/friendly';
 import DevPlugin from '../plugins/dev';
 import ProdPlugin from '../plugins/prod';
 import ScriptPlugin, { ScriptOptions } from '../plugins/script';
-import StylePlugin from '../plugins/style';
-import MultiPagePlugin, { MultiPageOptions } from '../plugins/multi-page';
+import EntryPlugin, { EntryOptions } from '../plugins/entry';
 import { Preset } from '../types';
 
-export interface MpaOptions {
-  multiPageOptions?: MultiPageOptions;
+export interface LibOptions {
+  entryOptions?: EntryOptions;
   scriptOptions?: ScriptOptions;
 }
 
-const mpaPreset: Preset<MpaOptions | undefined> = (options = {}) => {
-  const { multiPageOptions, scriptOptions } = options;
+const libPreset: Preset<LibOptions> = (options = {}) => {
+  const { entryOptions, scriptOptions } = options;
   return {
     plugins: [
-      new MultiPagePlugin(multiPageOptions),
+      new EntryPlugin(entryOptions),
       new ScriptPlugin(scriptOptions),
-      new StylePlugin(),
       new FriendlyPlugin(),
       new DevPlugin(),
       new ProdPlugin(),
@@ -25,4 +23,4 @@ const mpaPreset: Preset<MpaOptions | undefined> = (options = {}) => {
   };
 };
 
-export default mpaPreset;
+export default libPreset;
