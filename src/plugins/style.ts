@@ -1,5 +1,6 @@
-import autoprefixer from 'autoprefixer';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import autoprefixer from 'autoprefixer';
+import cssnano from 'cssnano';
 import Config from 'webpack-chain';
 import Plugin from './plugin';
 import { isProd } from '../utils';
@@ -27,7 +28,7 @@ export default class StylePlugin extends Plugin {
       .use('postcss-loader')
       .loader('postcss-loader')
       .options({
-        plugins: [autoprefixer()],
+        plugins: [autoprefixer(), ...(isProd() ? [cssnano()] : [])],
       });
 
     rule.use('less-loader').loader('less-loader');
